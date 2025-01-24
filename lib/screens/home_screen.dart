@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telegram_clone/screens/search_screen.dart';
+import 'package:telegram_clone/screens/settings_screen.dart';
 import 'package:telegram_clone/widgets/chat/chat_list.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
 import 'package:telegram_clone/widgets/chat/channel_list.dart';
@@ -115,7 +116,12 @@ class _HomeScreenState extends State<HomeScreen>
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
           ),
         ],
       ),
