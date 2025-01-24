@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen>
           ],
         ),
       ),
+      drawer: _buildDrawer(context),
       body: Column(
         children: [
           Expanded(
@@ -58,6 +59,52 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Widget _buildDrawer(context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+            ),
+            accountName: Text('John Doe'),
+            accountEmail: Text('+1 234 567 8900'),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.group),
+            title: const Text('New Group'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Contacts'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.call),
+            title: const Text('Calls'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.bookmark),
+            title: const Text('Saved Messages'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showCreateOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -73,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen>
             leading: const Icon(Icons.group),
             title: const Text('New Group'),
             onTap: () {
+              // Handle new group
               Navigator.pop(context);
             },
           ),
@@ -80,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen>
             leading: const Icon(Icons.campaign),
             title: const Text('New Channel'),
             onTap: () {
+              // Handle new channel
               Navigator.pop(context);
             },
           ),
