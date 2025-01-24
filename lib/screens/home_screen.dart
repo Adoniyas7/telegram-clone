@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:telegram_clone/widgets/chat/chat_list.dart';
+import 'package:telegram_clone/widgets/chat/group_list.dart';
+import 'package:telegram_clone/widgets/chat/channel_list.dart';
+import 'package:telegram_clone/widgets/chat/bot_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -33,6 +36,9 @@ class _HomeScreenState extends State<HomeScreen>
           controller: _tabController,
           tabs: const [
             Tab(text: 'All'),
+            Tab(text: 'Groups'),
+            Tab(text: 'Channels'),
+            Tab(text: 'Bots'),
           ],
         ),
       ),
@@ -44,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen>
               controller: _tabController,
               children: [
                 const ChatList(),
+                GroupList(),
+                ChannelList(
+                  channels: ['mm', 'nn', 'oo', 'pp', 'qq'],
+                ),
+                BotList(),
               ],
             ),
           ),
