@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telegram_clone/screens/search_screen.dart';
 import 'package:telegram_clone/widgets/chat/chat_list.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
 import 'package:telegram_clone/widgets/chat/channel_list.dart';
@@ -29,7 +30,12 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            },
           ),
         ],
         bottom: TabBar(
