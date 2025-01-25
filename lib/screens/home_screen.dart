@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:telegram_clone/screens/search_screen.dart';
 import 'package:telegram_clone/screens/settings_screen.dart';
 import 'package:telegram_clone/widgets/chat/chat_list.dart';
+import 'package:telegram_clone/widgets/stories/stories_bar.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
 import 'package:telegram_clone/widgets/chat/channel_list.dart';
 import 'package:telegram_clone/widgets/chat/bot_list.dart';
@@ -52,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen>
       drawer: _buildDrawer(context),
       body: Column(
         children: [
+          const StoriesBar(),
           Expanded(
             child: TabBarView(
               controller: _tabController,
