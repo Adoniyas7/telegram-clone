@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:telegram_clone/constants/colors.dart';
 import 'screens/home_screen.dart';
 
@@ -11,7 +12,7 @@ class TelegramCloneApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
         title: 'Telegram Clone',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

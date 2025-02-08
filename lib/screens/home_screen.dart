@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Added for navigation
 import 'package:telegram_clone/screens/search_screen.dart';
 import 'package:telegram_clone/screens/settings_screen.dart';
+import 'package:telegram_clone/screens/new_message_screen.dart'; // Import the new message screen
 import 'package:telegram_clone/widgets/chat/chat_list.dart';
 import 'package:telegram_clone/widgets/stories/stories_bar.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
@@ -51,23 +53,25 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
       drawer: _buildDrawer(context),
-      body: Column(
-        children: [
-          const StoriesBar(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                const ChatList(),
-                GroupList(),
-                ChannelList(
-                  channels: ['mm', 'nn', 'oo', 'pp', 'qq'],
-                ),
-                BotList(),
-              ],
+      body: SafeArea( // Wrap the body with SafeArea to avoid overlapping with system UI
+        child: Column(
+          children: [
+            const StoriesBar(),
+            Expanded( // Use Expanded to allow the TabBarView to take available space
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  const ChatList(),
+                  GroupList(),
+                  const ChannelList(
+                    channels: ['mm', 'nn', 'oo', 'pp', 'qq'],
+                  ),
+                  BotList(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
@@ -79,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildDrawer(context) {
+  Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -88,9 +92,9 @@ class _HomeScreenState extends State<HomeScreen>
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
             ),
-            accountName: Text('John Doe'),
-            accountEmail: Text('+1 234 567 8900'),
-            currentAccountPicture: CircleAvatar(
+            accountName: const Text('John Doe'),
+            accountEmail: const Text('+1 234 567 8900'),
+            currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(Icons.person),
             ),
@@ -139,13 +143,15 @@ class _HomeScreenState extends State<HomeScreen>
           ListTile(
             leading: const Icon(Icons.message),
             title: const Text('New Message'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context); // Close bottom sheet first
+              Get.to(() => NewMessageScreen()); // Navigate to the New Message screen
+            },
           ),
           ListTile(
             leading: const Icon(Icons.group),
             title: const Text('New Group'),
             onTap: () {
-              // Handle new group
               Navigator.pop(context);
             },
           ),
@@ -153,7 +159,6 @@ class _HomeScreenState extends State<HomeScreen>
             leading: const Icon(Icons.campaign),
             title: const Text('New Channel'),
             onTap: () {
-              // Handle new channel
               Navigator.pop(context);
             },
           ),
