@@ -3,8 +3,8 @@ import 'package:telegram_clone/widgets/stories/story_circle.dart';
 import '../../screens/story_viewer_screen.dart';
 import '../../models/story_model.dart';
 
-class StoriesBar extends StatelessWidget {
-  const StoriesBar({Key? key}) : super(key: key);
+class ExpandedStoriesBar extends StatelessWidget {
+  const ExpandedStoriesBar({Key? key}) : super(key: key);
 
   void _openStory(BuildContext context, Story story) {
     Navigator.push(
