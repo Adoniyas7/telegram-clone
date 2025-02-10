@@ -39,14 +39,22 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  double _lastScrollOffset = 0.0;
+
   void _handleScroll(double offset) {
     setState(() {
-      if (offset > 0 && _tabController.indexIsChanging == false) {
-        _showStoriesBar = false;
+      if (offset > _lastScrollOffset &&
+          _tabController.indexIsChanging == false) {
+        // scrl down
+        _isStoriesExpanded = true;
+        _showStoriesBar = true;
+      } else if (offset < _lastScrollOffset &&
+          _tabController.indexIsChanging == false) {
+        // scrl up
         _isStoriesExpanded = false;
-      } else {
         _showStoriesBar = true;
       }
+      _lastScrollOffset = offset;
     });
   }
 
