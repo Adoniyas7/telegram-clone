@@ -10,65 +10,81 @@ class CallScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 80,
-            backgroundImage: AssetImage(profileImage), // Provide a valid image asset
+      backgroundColor: Colors.blue,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF4A90E2), Color(0xFF0A74DA)], // Gradient blue shades
           ),
-          const SizedBox(height: 20),
-          Text(
-            name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 50), // Padding from top
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: profileImage.startsWith('http')
+                      ? NetworkImage(profileImage)
+                      : AssetImage(profileImage) as ImageProvider,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Click on the Camera icon if you want to start a video call.",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
+            const SizedBox(height: 20),
+            Text(
+              name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.videocam, color: Colors.blue),
-                iconSize: 50,
-                onPressed: () {
-                  // Add functionality for video call
-                },
+            const SizedBox(height: 5),
+            const Text(
+              "Waiting...",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
               ),
-              IconButton(
-                icon: const Icon(Icons.cancel, color: Colors.red),
-                iconSize: 50,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildCallButton(Icons.volume_up, "Speaker", Colors.white),
+                  _buildCallButton(Icons.videocam, "Start Video", Colors.white),
+                  _buildCallButton(Icons.mic_off, "Mute", Colors.white),
+                  _buildCallButton(Icons.call_end, "End Call", Colors.red, () {
+                    Navigator.pop(context);
+                  }),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.call, color: Colors.green),
-                iconSize: 50,
-                onPressed: () {
-                  // Add functionality for audio call
-                },
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildCallButton(IconData icon, String label, Color color, [VoidCallback? onTap]) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon, color: color),
+          iconSize: 40,
+          onPressed: onTap ?? () {},
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white70, fontSize: 12),
+        ),
+      ],
     );
   }
 }
