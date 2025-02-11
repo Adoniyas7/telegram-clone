@@ -5,6 +5,7 @@ import 'package:telegram_clone/widgets/chat/chat_list.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
 import 'package:telegram_clone/widgets/chat/channel_list.dart';
 import 'package:telegram_clone/widgets/chat/bot_list.dart';
+import 'my_profile_screen.dart'; 
 import 'package:telegram_clone/widgets/stories/collapsed_stories_bar.dart';
 import 'package:telegram_clone/widgets/stories/expanded_stories_bar.dart';
 
@@ -136,55 +137,81 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildDrawer(context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-            ),
-            accountName: Text('John Doe'),
-            accountEmail: Text('+1 234 567 8900'),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person),
-            ),
+  return Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        UserAccountsDrawerHeader(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
           ),
-          ListTile(
-            leading: const Icon(Icons.group),
-            title: const Text('New Group'),
-            onTap: () {},
+          accountName: Text('John Doe'),
+          accountEmail: Text('+1 234 567 8900'),
+          currentAccountPicture: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: Icon(Icons.person),
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Contacts'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.call),
-            title: const Text('Calls'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.bookmark),
-            title: const Text('Saved Messages'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-          ),
-        ],
-      ),
+        ),
+        ListTile(
+  leading: const Icon(Icons.account_circle),
+  title: const Text('My Profile'),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MyProfileScreen()),
     );
-  }
+  },
+),
+        ListTile(
+          leading: const Icon(Icons.account_balance_wallet),
+          title: const Text('Wallet'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.group),
+          title: const Text('New Group'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: const Text('Contacts'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.call),
+          title: const Text('Calls'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.bookmark),
+          title: const Text('Saved Messages'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.settings),
+          title: const Text('Settings'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.person_add),
+          title: const Text('Invite Friends'),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(Icons.info),
+          title: const Text('Telegram Features'),
+          onTap: () {},
+        ),
+      ],
+    ),
+  );
+}
+
 
   void _showCreateOptions(BuildContext context) {
     showModalBottomSheet(

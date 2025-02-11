@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:telegram_clone/models/contact_model.dart';
 import 'package:telegram_clone/screens/profile_screen.dart';
 import 'package:telegram_clone/widgets/file_attachment.dart';
+import 'call_screen.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final String name;
@@ -103,7 +104,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.call),
-            onPressed: () {},
+            onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CallScreen(
+        name: widget.name, // Use the chat's name dynamically
+        profileImage: widget.avatarUrl, // Use the chat's avatar dynamically
+      ),
+    ),
+  );
+},
           ),
           IconButton(
             icon: const Icon(Icons.more_vert),
