@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../constants/colors.dart';
 
 class StoryCircle extends StatelessWidget {
   final String imageUrl;
@@ -26,37 +25,43 @@ class StoryCircle extends StatelessWidget {
         width: 72,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: hasStory && !isViewed
                     ? LinearGradient(
                         colors: [
-                          AppColors.primaryBlue,
-                          AppColors.secondaryBlue,
+                          const Color.fromARGB(255, 0, 255, 8),
+                          const Color.fromARGB(255, 0, 198, 70),
                         ],
                       )
-                    : null,
+                    : LinearGradient(
+                        colors: [
+                          const Color.fromARGB(255, 133, 133, 133),
+                          const Color.fromARGB(255, 118, 118, 118),
+                        ],
+                      ),
                 border: hasStory && isViewed
-                    ? Border.all(color: AppColors.darkGrey, width: 2)
+                    ? Border.all(color: Colors.grey)
                     : null,
               ),
               child: CircleAvatar(
-                radius: 30,
-                backgroundColor: AppColors.lightGrey,
+                radius: 28,
                 backgroundImage: NetworkImage(imageUrl),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              userName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black87,
+            const SizedBox(height: 1),
+            Flexible(
+              child: Text(
+                userName,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
