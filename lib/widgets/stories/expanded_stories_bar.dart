@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:telegram_clone/widgets/stories/story_circle.dart';
 import '../../screens/story_viewer_screen.dart';
 import '../../models/story_model.dart';
+import 'package:provider/provider.dart';
+import '../../providers/story_provider.dart';
 
 class ExpandedStoriesBar extends StatelessWidget {
   const ExpandedStoriesBar({Key? key}) : super(key: key);
@@ -12,11 +14,17 @@ class ExpandedStoriesBar extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => StoryViewerScreen(story: story),
       ),
-    );
+    ).then((_) {
+      // Mark the story as viewed when returning from StoryViewerScreen
+      Provider.of<StoryProvider>(context, listen: false)
+          .markStoryAsViewed(story.userId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final storyProvider = Provider.of<StoryProvider>(context);
+
     final sampleStory = Story(
       userId: '1',
       userName: 'John',
@@ -54,14 +62,14 @@ class ExpandedStoriesBar extends StatelessWidget {
             imageUrl: 'https://picsum.photos/200',
             userName: 'Alice',
             hasStory: true,
-            isViewed: true,
+            isViewed: storyProvider.isStoryViewed('2'),
             onTap: () => _openStory(context, sampleStory),
           ),
           StoryCircle(
             imageUrl: 'https://picsum.photos/201',
             userName: 'John',
             hasStory: true,
-            isAdd: false,
+            isViewed: storyProvider.isStoryViewed('1'),
             onTap: () => _openStory(context, sampleStory),
           ),
         ],
