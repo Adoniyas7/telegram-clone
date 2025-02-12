@@ -34,9 +34,9 @@ class StoryActions extends StatelessWidget {
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Send message',
+                      'Reply privately...',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.white54,
                         fontSize: 14,
                       ),
                     ),
@@ -46,11 +46,41 @@ class StoryActions extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.more_horiz, color: Colors.white),
-            onPressed: () {},
+          _buildActionButton(
+            icon: Icons.reply,
+            onPressed: () {
+              // Add share functionality
+            },
+          ),
+          const SizedBox(width: 8),
+          _buildActionButton(
+            icon: Icons.favorite_border,
+            onPressed: () {
+              // Add like functionality
+            },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withOpacity(0.1),
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white, size: 20),
+        onPressed: onPressed,
+        constraints: const BoxConstraints.tightFor(
+          width: 44,
+          height: 44,
+        ),
+        padding: EdgeInsets.zero,
       ),
     );
   }

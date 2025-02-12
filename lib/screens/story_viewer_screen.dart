@@ -4,6 +4,8 @@ import 'package:telegram_clone/widgets/stories/story_actions.dart';
 import 'package:telegram_clone/widgets/stories/story_content_view.dart';
 import 'package:telegram_clone/widgets/stories/story_header.dart';
 import 'package:telegram_clone/widgets/stories/story_progress_bar.dart';
+import 'package:provider/provider.dart';
+import '../providers/story_provider.dart';
 
 class StoryViewerScreen extends StatefulWidget {
   final Story story;
@@ -54,6 +56,10 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
 
   @override
   void dispose() {
+    // Mark the story as viewed when the screen is closed
+    widget.story.markAsViewed();
+    Provider.of<StoryProvider>(context, listen: false)
+        .markStoryAsViewed(widget.story.userId);
     _pageController.dispose();
     _animationController.dispose();
     super.dispose();
