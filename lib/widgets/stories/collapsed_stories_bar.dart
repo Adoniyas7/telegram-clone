@@ -1,4 +1,7 @@
+// lib/widgets/stories/collapsed_stories_bar.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/story_provider.dart';
 
 class CollapsedStoriesBar extends StatelessWidget {
   final VoidCallback onTap;
@@ -7,33 +10,36 @@ class CollapsedStoriesBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storyProvider = Provider.of<StoryProvider>(context);
+    final stories = storyProvider.stories;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         height: 70,
         child: Row(
-          mainAxisSize: MainAxisSize.min, // Makes the Row take minimum space
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxWidth: 180,
               ),
               child: Stack(
                 children: [
-                  _buildStoryItem('https://picsum.photos/200', 0),
-                  _buildStoryItem('https://picsum.photos/201', 1),
-                  _buildStoryItem('https://picsum.photos/202', 2),
-                  _buildStoryItem('https://picsum.photos/203', 3),
-                  _buildStoryItem('https://picsum.photos/204', 4),
-                  _buildStoryItem('https://picsum.photos/205', 5),
+                  for (var i = 0; i < stories.length; i++)
+                    _buildStoryItem(
+                      stories[i].userImage,
+                      i,
+                      storyProvider.isStoryViewed(stories[i].userId),
+                    ),
                 ],
               ),
             ),
-            const SizedBox(width: 1),
+            const SizedBox(width: 8),
             Text(
-              '6 stories',
-              style: TextStyle(
+              '${stories.length} stories',
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -45,18 +51,25 @@ class CollapsedStoriesBar extends StatelessWidget {
     );
   }
 
-  Widget _buildStoryItem(String imageUrl, int index) {
+  Widget _buildStoryItem(String imageUrl, int index, bool isViewed) {
     return Positioned(
-      left: index * 25.0, // Adjust the spacing between the circles
+      left: index * 25.0,
       child: Container(
-        padding: const EdgeInsets.all(2), // Border width
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Color.fromARGB(255, 0, 255, 8),
-              Color.fromARGB(255, 0, 198, 70),
-            ],
-          ),
+          gradient: !isViewed
+              ? const LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 0, 255, 8),
+                    Color.fromARGB(255, 0, 198, 70),
+                  ],
+                )
+              : const LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 133, 133, 133),
+                    Color.fromARGB(255, 118, 118, 118),
+                  ],
+                ),
           shape: BoxShape.circle,
         ),
         child: CircleAvatar(

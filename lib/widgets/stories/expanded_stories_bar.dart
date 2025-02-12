@@ -15,7 +15,6 @@ class ExpandedStoriesBar extends StatelessWidget {
         builder: (context) => StoryViewerScreen(story: story),
       ),
     ).then((_) {
-      // Mark the story as viewed when returning from StoryViewerScreen
       Provider.of<StoryProvider>(context, listen: false)
           .markStoryAsViewed(story.userId);
     });
@@ -24,25 +23,7 @@ class ExpandedStoriesBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storyProvider = Provider.of<StoryProvider>(context);
-
-    final sampleStory = Story(
-      userId: '1',
-      userName: 'John',
-      userImage: 'https://picsum.photos/201',
-      items: [
-        StoryItem(
-          url: 'https://picsum.photos/400/800',
-          timestamp: DateTime.now(),
-          type: StoryType.image,
-        ),
-        StoryItem(
-          url: 'https://picsum.photos/401/800',
-          timestamp: DateTime.now(),
-          type: StoryType.image,
-        ),
-      ],
-      lastUpdated: DateTime.now(),
-    );
+    final stories = storyProvider.stories;
 
     return Container(
       height: 100,
@@ -58,20 +39,13 @@ class ExpandedStoriesBar extends StatelessWidget {
             isAdd: true,
             onTap: () {},
           ),
-          StoryCircle(
-            imageUrl: 'https://picsum.photos/200',
-            userName: 'Alice',
-            hasStory: true,
-            isViewed: storyProvider.isStoryViewed('2'),
-            onTap: () => _openStory(context, sampleStory),
-          ),
-          StoryCircle(
-            imageUrl: 'https://picsum.photos/201',
-            userName: 'John',
-            hasStory: true,
-            isViewed: storyProvider.isStoryViewed('1'),
-            onTap: () => _openStory(context, sampleStory),
-          ),
+          ...stories.map((story) => StoryCircle(
+                imageUrl: story.userImage,
+                userName: story.userName,
+                hasStory: true,
+                isViewed: storyProvider.isStoryViewed(story.userId),
+                onTap: () => _openStory(context, story),
+              )),
         ],
       ),
     );
