@@ -8,9 +8,7 @@ import 'package:telegram_clone/widgets/chat/chat_list.dart';
 import 'package:telegram_clone/widgets/chat/group_list.dart';
 import 'contact_group_screen.dart';
 import 'new_channel_screen.dart'; // Import the NewChannelScreen
-import 'package:telegram_clone/widgets/chat/channel_list.dart';
-import 'package:telegram_clone/widgets/chat/bot_list.dart';
-import 'my_profile_screen.dart'; 
+import 'my_profile_screen.dart';
 import 'package:telegram_clone/widgets/stories/collapsed_stories_bar.dart';
 import 'package:telegram_clone/widgets/stories/expanded_stories_bar.dart';
 
@@ -18,15 +16,17 @@ class HomeScreen extends StatefulWidget {
   final bool isDarkMode;
   final VoidCallback toggleDarkMode;
 
-  const HomeScreen({Key? key, required this.isDarkMode, required this.toggleDarkMode}) : super(key: key);
+  const HomeScreen(
+      {Key? key, required this.isDarkMode, required this.toggleDarkMode})
+      : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<String> _chatList = [];
   bool _isStoriesExpanded = false;
   bool _showStoriesBar = true;
 
@@ -34,12 +34,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-  }
-
-  void _addNewMessage(String message) {
-    setState(() {
-      _chatList.add(message);
-    });
   }
 
   @override
@@ -177,17 +171,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MyProfileScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const MyProfileScreen()),
               );
             },
-            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance_wallet),
+            title: const Text('Wallet'),
+            onTap: () {},
+          ),
           ListTile(
             leading: const Icon(Icons.group),
             title: const Text('New Group'),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ContactGroupScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const ContactGroupScreen()),
               );
             },
           ),
@@ -198,17 +199,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContactScreen(onMessageSent: (String message) {}),
+                  builder: (context) =>
+                      ContactScreen(onMessageSent: (String message) {}),
                 ),
               );
             },
           ),
-          ListTile(leading: const Icon(Icons.call), title: const Text('Calls'), onTap: () {}),
-          ListTile(leading: const Icon(Icons.bookmark), title: const Text('Saved Messages'), onTap: () {}),
+          ListTile(
+              leading: const Icon(Icons.call),
+              title: const Text('Calls'),
+              onTap: () {}),
+          ListTile(
+              leading: const Icon(Icons.bookmark),
+              title: const Text('Saved Messages'),
+              onTap: () {}),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen())),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SettingsScreen())),
           ),
           ListTile(
             leading: const Icon(Icons.campaign),
@@ -216,62 +227,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NewChannelScreen()), // Navigate to NewChannelScreen
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const NewChannelScreen()), // Navigate to NewChannelScreen
               );
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.person_add),
+            title: const Text('Invite Friends'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('Telegram Features'),
+            onTap: () {},
+          ),
         ],
       ),
-        ListTile(
-          leading: const Icon(Icons.account_balance_wallet),
-          title: const Text('Wallet'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.group),
-          title: const Text('New Group'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.person),
-          title: const Text('Contacts'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.call),
-          title: const Text('Calls'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.bookmark),
-          title: const Text('Saved Messages'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.settings),
-          title: const Text('Settings'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SettingsScreen()),
-            );
-          },
-        ),
-        ListTile(
-          leading: const Icon(Icons.person_add),
-          title: const Text('Invite Friends'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: const Icon(Icons.info),
-          title: const Text('Telegram Features'),
-          onTap: () {},
-        ),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 
   void _showCreateOptions(BuildContext context) {
     showModalBottomSheet(
@@ -287,7 +262,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContactScreen(onMessageSent: (String message) {}),
+                  builder: (context) =>
+                      ContactScreen(onMessageSent: (String message) {}),
                 ),
               );
             },
@@ -312,7 +288,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NewChannelScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const NewChannelScreen()),
               ); // Navigate to NewChannelScreen
             },
           ),

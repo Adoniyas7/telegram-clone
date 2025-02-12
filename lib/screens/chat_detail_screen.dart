@@ -4,18 +4,21 @@ import 'package:telegram_clone/models/contact_model.dart';
 import 'package:telegram_clone/screens/profile_screen.dart';
 import 'package:telegram_clone/widgets/file_attachment.dart';
 import 'call_screen.dart';
+import 'dart:async'; // Import for Timer
 
 class ChatDetailScreen extends StatefulWidget {
   final String name;
   final String avatarUrl;
   final bool isOnline;
+  final Function(String)? onMessageSent;
 
   const ChatDetailScreen({
-    super.key,
+    Key? key,
     required this.name,
     required this.avatarUrl,
     required this.isOnline,
-  });
+    this.onMessageSent,
+  }) : super(key: key);
 
   @override
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
@@ -23,26 +26,105 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  Timer? _timer;
+  int _seconds = 0;
+  bool _isRecording = false;
+
   final List<Map<String, dynamic>> _messages = [
     {
       'text': 'Hello!',
       'isMe': false,
       'time': '10:00',
       'reactions': <String>[],
+      'isVoiceMessage': false,
     },
     {
       'text': 'Hi there!',
       'isMe': true,
       'time': '10:01',
       'reactions': <String>[],
-    },
-    {
-      'text': 'How are you?',
-      'isMe': false,
-      'time': '10:01',
-      'reactions': <String>[],
+      'isVoiceMessage': false,
     },
   ];
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      setState(() {
+        _messages.add({
+          'text': message,
+          'isMe': true,
+          'time': _getCurrentTime(),
+          'reactions': <String>[],
+          'isVoiceMessage': false,
+        });
+      });
+      _messageController.clear();
+      widget.onMessageSent?.call(message);
+      _scrollToBottom();
+    }
+  }
+
+  void _toggleRecording() {
+    if (_isRecording) {
+      _stopRecording();
+    } else {
+      _startRecording();
+    }
+  }
+
+  void _startRecording() {
+    setState(() {
+      _isRecording = true;
+      _seconds = 0;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
+  }
+
+  void _stopRecording() {
+    _timer?.cancel();
+    setState(() {
+      _isRecording = false;
+      _messages.add({
+        'text': 'Voice message',
+        'isMe': true,
+        'time': _getCurrentTime(),
+        'reactions': <String>[],
+        'isVoiceMessage': true,
+        'duration': _seconds,
+      });
+    });
+    _scrollToBottom();
+  }
+
+  String _getCurrentTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
 
   void _addReaction(int messageIndex, String reaction) {
     setState(() {
@@ -62,59 +144,63 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
-                      contact: Contact(
-                        id: '1',
-                        name: widget.name,
-                        avatarUrl: widget.avatarUrl,
-                        isOnline: widget.isOnline,
-                        phoneNumber: '1234567890',
-                      ),
-                    ),
-                  ),
-                );
-              },
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(widget.avatarUrl),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.name),
-                Text(
-                  widget.isOnline ? 'online' : 'offline',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.8),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(
+                  contact: Contact(
+                    id: '1',
+                    name: widget.name,
+                    avatarUrl: widget.avatarUrl,
+                    isOnline: widget.isOnline,
+                    phoneNumber: '',
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(widget.avatarUrl),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.name),
+                  Text(
+                    widget.isOnline ? 'online' : 'offline',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.call),
             onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CallScreen(
-        name: widget.name, // Use the chat's name dynamically
-        profileImage: widget.avatarUrl, // Use the chat's avatar dynamically
-      ),
-    ),
-  );
-},
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CallScreen(
+                    name: widget.name,
+                    profileImage: widget.avatarUrl,
+                  ),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.more_vert),
@@ -126,6 +212,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(8),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
@@ -135,12 +222,81 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   isMe: message['isMe'],
                   time: message['time'],
                   reactions: List<String>.from(message['reactions']),
+                  isVoiceMessage: message['isVoiceMessage'] ?? false,
+                  duration: message['duration'],
                   onLongPress: () => _showMessageOptions(context, index),
                 );
               },
             ),
           ),
+          if (_isRecording)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Recording: $_seconds seconds',
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, -1),
+            blurRadius: 8,
+            color: Colors.black.withOpacity(0.1),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          if (!_isRecording)
+            FileAttachmentWidget(
+              onFilePicked: (type, path, name) {
+                setState(() {
+                  _messages.add({
+                    'text': 'File: $name',
+                    'isMe': true,
+                    'time': _getCurrentTime(),
+                    'reactions': <String>[],
+                    'isVoiceMessage': false,
+                  });
+                });
+                _scrollToBottom();
+              },
+            ),
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Message',
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(_isRecording ? Icons.stop : Icons.mic),
+            onPressed: _toggleRecording,
+          ),
+          IconButton(
+            icon: const Icon(Icons.send, color: Colors.blue),
+            onPressed: _sendMessage,
+          ),
         ],
       ),
     );
@@ -179,71 +335,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
     );
   }
-
-  bool _isRecording = false;
-
-  Widget _buildMessageInput() {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, -1),
-            blurRadius: 8,
-            color: Colors.black.withOpacity(0.1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          if (!_isRecording)
-            FileAttachmentWidget(
-              onFilePicked: (type, path, name) {
-                setState(() {
-                  _messages.add({
-                    'type': type,
-                    'filePath': path,
-                    'fileName': name,
-                    'isMe': true,
-                    'time': DateTime.now().toString(),
-                    'reactions': <String>[],
-                  });
-                });
-              },
-            ),
-          if (!_isRecording)
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: const InputDecoration(
-                  hintText: 'Message',
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          if (_isRecording)
-            IconButton(
-              icon: const Icon(Icons.send),
-              onPressed: () {
-                setState(() {
-                  _isRecording = false;
-                });
-              },
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.mic),
-              onPressed: () {
-                setState(() {
-                  _isRecording = true;
-                });
-              },
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 class _MessageBubble extends StatelessWidget {
@@ -251,6 +342,8 @@ class _MessageBubble extends StatelessWidget {
   final bool isMe;
   final String time;
   final List<String> reactions;
+  final bool isVoiceMessage;
+  final int? duration;
   final VoidCallback onLongPress;
 
   const _MessageBubble({
@@ -259,6 +352,8 @@ class _MessageBubble extends StatelessWidget {
     required this.time,
     required this.reactions,
     required this.onLongPress,
+    this.isVoiceMessage = false,
+    this.duration,
   });
 
   @override
@@ -284,12 +379,28 @@ class _MessageBubble extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      text,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
+                    if (isVoiceMessage)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.mic,
+                              color: isMe ? Colors.white : Colors.black),
+                          const SizedBox(width: 8),
+                          Text(
+                            "$duration sec",
+                            style: TextStyle(
+                              color: isMe ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      Text(
+                        text,
+                        style: TextStyle(
+                          color: isMe ? Colors.white : Colors.black,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 2),
                     Text(
                       time,

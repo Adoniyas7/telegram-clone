@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'chat_tile.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({super.key, required List<String> messages});
+  const ChatList({super.key});
 
   @override
   Widget build(BuildContext context) {
