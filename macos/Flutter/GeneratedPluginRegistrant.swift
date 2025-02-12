@@ -9,7 +9,7 @@ import audioplayers_darwin
 import file_selector_macos
 import path_provider_foundation
 import record_macos
-import sqflite_darwin
+import sqflite
 import video_player_avfoundation
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

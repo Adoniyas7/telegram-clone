@@ -101,6 +101,7 @@ class ChatTile extends StatelessWidget {
               name: name,
               avatarUrl: avatarUrl,
               isOnline: isOnline,
+              onMessageSent: (String message) {},
             ),
           ),
         );
