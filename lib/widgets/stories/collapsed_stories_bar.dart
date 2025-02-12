@@ -35,7 +35,7 @@ class CollapsedStoriesBar extends StatelessWidget {
               '6 stories',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -51,7 +51,12 @@ class CollapsedStoriesBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(2), // Border width
         decoration: BoxDecoration(
-          color: Colors.blue, // Border color
+          gradient: const LinearGradient(
+            colors: [
+              Color.fromARGB(255, 0, 255, 8),
+              Color.fromARGB(255, 0, 198, 70),
+            ],
+          ),
           shape: BoxShape.circle,
         ),
         child: CircleAvatar(
