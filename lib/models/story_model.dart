@@ -5,7 +5,7 @@ class Story {
   final String userImage;
   final List<StoryItem> items;
   final DateTime lastUpdated;
-  final bool isViewed;
+  bool isViewed;
 
   Story({
     required this.userId,
@@ -15,6 +15,10 @@ class Story {
     required this.lastUpdated,
     this.isViewed = false,
   });
+
+  void markAsViewed() {
+    isViewed = true;
+  }
 }
 
 class StoryItem {
