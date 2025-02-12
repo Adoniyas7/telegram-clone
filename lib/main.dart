@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:telegram_clone/constants/colors.dart';
 import 'screens/home_screen.dart';
+import 'package:telegram_clone/providers/story_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const TelegramCloneApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => StoryProvider(),
+      child: const TelegramCloneApp(),
+    ),
+  );
 }
 
 class TelegramCloneApp extends StatelessWidget {
