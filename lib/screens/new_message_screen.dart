@@ -23,7 +23,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
     final message = _messageController.text.trim();
     if (message.isNotEmpty) {
       setState(() {
-        _messages.add({"text": message, "time": "10:02", "isMe": true});
+        _messages.add({"text": message, "time": "10:02", "isMe": true, "isVoiceMessage": false}); // Ensure all fields are set
       });
       _messageController.clear();
       widget.onMessageSent(message);
@@ -184,7 +184,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
               itemBuilder: (context, index) {
                 final message = _messages[index];
                 return Align(
-                  alignment: message["isMe"] ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: message["isMe"] ?? false ? Alignment.centerRight : Alignment.centerLeft, // Use null-aware operator
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 5),
                     padding: const EdgeInsets.all(10),
