@@ -52,9 +52,9 @@ class ExpandedStoriesBar extends StatelessWidget {
           ),
           StoryCircle(
             imageUrl: 'https://picsum.photos/200',
-            userName: 'Your Story',
-            hasStory: false,
-            isAdd: false,
+            userName: 'Alice',
+            hasStory: true,
+            isViewed: true,
             onTap: () => _openStory(context, sampleStory),
           ),
           StoryCircle(
