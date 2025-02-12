@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'chat_settings_screen.dart';
+import 'privacy_security_screen.dart';
+import 'notifications_sounds_screen.dart';
+import 'data_storage_screen.dart';
+import 'power_saving_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -33,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           Container(
             color: const Color(0xFF2AABEE),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(5),
             child: Column(
               children: [
                 Row(
@@ -62,13 +67,15 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   alignment: Alignment.centerLeft,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                    Text('Phone Number'),
+                    Text('Phone Number',
+                    style: TextStyle(fontWeight: FontWeight.bold),),
                     Text(
                      '+12345678900',
                      style: TextStyle(color: Colors.white),
@@ -80,7 +87,8 @@ class SettingsScreen extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Column(
                     children: const [
-                    Text('Username'),
+                    Text('Username',
+                    style: TextStyle(fontWeight: FontWeight.bold),),
                     Text(
                      '@johndoe',
                      style: TextStyle(color: Colors.white),
@@ -88,12 +96,13 @@ class SettingsScreen extends StatelessWidget {
                    ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Column(
                     children: const [
-                    Text('Bio'),
+                    Text('Bio                                                                                                         ',
+                    style: TextStyle(fontWeight: FontWeight.bold),),
                     Text(
                      "It's a sad truth that those who shine brightest often burn fastest.",
                      style: TextStyle(color: Colors.white),
@@ -106,31 +115,61 @@ class SettingsScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              children: const [
+              children: [
                 ListTile(
-                  leading: Icon(Icons.chat),
-                  title: Text('Chat Settings'),
-                  trailing: Icon(Icons.chevron_right),
+                  leading: const Icon(Icons.chat),
+                  title: const Text('Chat Settings'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatSettingsScreen()),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.lock),
                   title: Text('Privacy and Security'),
                   trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PrivacySecurityScreen()),
+    );
+  },
                 ),
                 ListTile(
                   leading: Icon(Icons.notifications),
                   title: Text('Notifications and Sounds'),
                   trailing: Icon(Icons.chevron_right),
+                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotificationsSoundsScreen()),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.data_usage),
                   title: Text('Data and Storage'),
                   trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DataAndStorageScreen()),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.battery_saver),
                   title: Text('Power Saving'),
                   trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PowerSavingScreen()),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.folder),
