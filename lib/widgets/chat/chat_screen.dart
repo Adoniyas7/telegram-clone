@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telegram_clone/constants/colors.dart';
 
 class ChatScreen extends StatefulWidget {
   final String groupName;
@@ -56,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isJohnDoe ? Colors.green[50] : Colors.white,
+                      color: isJohnDoe ? AppColors.primaryBlue : AppColors.lightGrey,
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(10),
                         topRight: const Radius.circular(10),

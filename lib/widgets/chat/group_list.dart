@@ -42,12 +42,6 @@ class GroupList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Groups'),
-        actions: [
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-        ],
-      ),
       body: ListView.builder(
         itemCount: groups.length,
         itemBuilder: (context, index) {
