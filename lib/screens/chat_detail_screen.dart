@@ -89,16 +89,42 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
   }
 
+  void _addReaction(int messageIndex, String reaction) {
+    setState(() {
+      List<String> reactions =
+          List<String>.from(_messages[messageIndex]['reactions']);
+      if (reactions.contains(reaction)) {
+        reactions.remove(reaction);
+      } else {
+        reactions.add(reaction);
+      }
+      _messages[messageIndex]['reactions'] = reactions;
+    });
+  }
+
   void _showMessageOptions(BuildContext context, int messageIndex) {
     showModalBottomSheet(
       context: context,
       builder: (context) => _MessageOptionsSheet(
+        onReactionSelected: (reaction) {
+          Navigator.pop(context);
+          _addReaction(messageIndex, reaction);
+        },
         onCopy: () {
           Navigator.pop(context);
-          Clipboard.setData(ClipboardData(text: _messages[messageIndex]['text']));
+          Clipboard.setData(
+              ClipboardData(text: _messages[messageIndex]['text']));
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Message copied to clipboard')),
           );
+        },
+        onReply: () {
+          Navigator.pop(context);
+          // Implement reply functionality
+        },
+        onForward: () {
+          Navigator.pop(context);
+          // Implement forward functionality
         },
         onDelete: () {
           Navigator.pop(context);
@@ -282,7 +308,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Recording: $_seconds seconds',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           _buildMessageInput(),
@@ -374,81 +401,94 @@ class _MessageBubble extends StatelessWidget {
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
         onLongPress: onLongPress,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          child: Column(
-            crossAxisAlignment:
-                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color:
-                      isMe ? Theme.of(context).primaryColor : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (isVoiceMessage)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.mic,
-                              color: isMe ? Colors.white : Colors.black),
-                          const SizedBox(width: 8),
+        child: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: Column(
+                crossAxisAlignment:
+                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isMe
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[200],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (isVoiceMessage)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.mic,
+                                  color: isMe ? Colors.white : Colors.black),
+                              const SizedBox(width: 8),
+                              Text(
+                                "$duration sec",
+                                style: TextStyle(
+                                  color: isMe ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
+                          )
+                        else
                           Text(
-                            "$duration sec",
+                            text,
                             style: TextStyle(
                               color: isMe ? Colors.white : Colors.black,
                             ),
                           ),
-                        ],
-                      )
-                    else
-                      Text(
-                        text,
-                        style: TextStyle(
-                          color: isMe ? Colors.white : Colors.black,
+                        const SizedBox(height: 2),
+                        Text(
+                          time,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isMe ? Colors.white70 : Colors.grey,
+                          ),
                         ),
-                      ),
-                    const SizedBox(height: 2),
-                    Text(
-                      time,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isMe ? Colors.white70 : Colors.grey,
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              if (reactions.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.only(top: 2),
+            ),
+            if (reactions.isNotEmpty)
+              Positioned(
+                bottom: 10,
+                right: isMe ? null : 37,
+                left: isMe ? 10 : null,
+                child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
+                      const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ...reactions.map((emoji) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: Text(emoji,
+                                style: const TextStyle(fontSize: 10)),
+                          )),
+                      Container(
+                        padding: const EdgeInsets.only(left: 1),
+                        margin: const EdgeInsets.only(left: 1),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: Colors.grey.withOpacity(0.3),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: reactions
-                        .map((emoji) =>
-                            Text(emoji, style: const TextStyle(fontSize: 12)))
-                        .toList(),
-                  ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
@@ -456,11 +496,17 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _MessageOptionsSheet extends StatelessWidget {
+  final Function(String) onReactionSelected;
   final VoidCallback onCopy;
+  final VoidCallback onReply;
+  final VoidCallback onForward;
   final VoidCallback onDelete;
 
   const _MessageOptionsSheet({
+    required this.onReactionSelected,
     required this.onCopy,
+    required this.onReply,
+    required this.onForward,
     required this.onDelete,
   });
 
@@ -474,10 +520,39 @@ class _MessageOptionsSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.grey.shade200),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildReactionButton('👍', context),
+                _buildReactionButton('❤️', context),
+                _buildReactionButton('😂', context),
+                _buildReactionButton('😮', context),
+                _buildReactionButton('😢', context),
+                _buildReactionButton('👏', context),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.reply),
+            title: const Text('Reply'),
+            onTap: onReply,
+          ),
           ListTile(
             leading: const Icon(Icons.copy),
             title: const Text('Copy'),
             onTap: onCopy,
+          ),
+          ListTile(
+            leading: const Icon(Icons.forward),
+            title: const Text('Forward'),
+            onTap: onForward,
           ),
           ListTile(
             leading: const Icon(Icons.delete),
@@ -486,6 +561,23 @@ class _MessageOptionsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
+      ),
+    );
+  }
+
+  Widget _buildReactionButton(String emoji, BuildContext context) {
+    return GestureDetector(
+      onTap: () => onReactionSelected(emoji),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          emoji,
+          style: const TextStyle(fontSize: 24),
+        ),
       ),
     );
   }
