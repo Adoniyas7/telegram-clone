@@ -32,8 +32,8 @@ class ChatList extends StatelessWidget {
       'online': 'true',
     },
     {
-      'name': 'Flutter Group',
-      'message': 'Bob: Check out this new feature!',
+      'name': 'John Deep',
+      'message': 'Check out this new feature!',
       'time': '11:45',
       'avatar': 'https://picsum.photos/201',
       'unread': '5',
