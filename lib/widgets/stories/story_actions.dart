@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class StoryActions extends StatelessWidget {
+class StoryActions extends StatefulWidget {
   const StoryActions({Key? key}) : super(key: key);
+
+  @override
+  _StoryActionsState createState() => _StoryActionsState();
+}
+
+class _StoryActionsState extends State<StoryActions> {
+  bool isLiked = false;
+
+  void _toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +61,13 @@ class StoryActions extends StatelessWidget {
           const SizedBox(width: 8),
           _buildActionButton(
             icon: Icons.reply,
-            onPressed: () {
-              // Add share functionality
-            },
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
           _buildActionButton(
-            icon: Icons.favorite_border,
-            onPressed: () {
-              // Add like functionality
-            },
+            icon: isLiked ? Icons.favorite : Icons.favorite_border,
+            color: isLiked ? Colors.red : Colors.white,
+            onPressed: _toggleLike,
           ),
         ],
       ),
@@ -67,21 +77,16 @@ class StoryActions extends StatelessWidget {
   Widget _buildActionButton({
     required IconData icon,
     required VoidCallback onPressed,
+    Color color = Colors.white,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.1),
+    return IconButton(
+      icon: Icon(icon, color: color, size: 24),
+      onPressed: onPressed,
+      constraints: const BoxConstraints.tightFor(
+        width: 44,
+        height: 44,
       ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.white, size: 20),
-        onPressed: onPressed,
-        constraints: const BoxConstraints.tightFor(
-          width: 44,
-          height: 44,
-        ),
-        padding: EdgeInsets.zero,
-      ),
+      padding: EdgeInsets.zero,
     );
   }
 }
