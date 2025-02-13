@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen>
               TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(text: 'All'),
+                  Tab(text: 'People'),
                   Tab(text: 'Groups'),
                   Tab(text: 'Channels'),
                   Tab(text: 'Bots'),
@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen>
   String _getTitleForCurrentTab() {
     switch (_tabController.index) {
       case 0:
-        return 'All';
+        return 'People';
       case 1:
         return 'Groups';
       case 2:
