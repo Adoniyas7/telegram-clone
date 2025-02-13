@@ -84,6 +84,32 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     }
   }
 
+  String _getCurrentTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _showMessageOptions(BuildContext context, int messageIndex) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => _MessageOptionsSheet(
+        onCopy: () {
+          Navigator.pop(context);
+          Clipboard.setData(ClipboardData(text: _messages[messageIndex]['text']));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Message copied to clipboard')),
+          );
+        },
+        onDelete: () {
+          Navigator.pop(context);
+          setState(() {
+            _messages.removeAt(messageIndex);
+          });
+        },
+      ),
+    );
+  }
+
   void _toggleRecording() {
     if (_isRecording) {
       _stopRecording();
@@ -119,24 +145,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       });
     });
     _scrollToBottom();
-  }
-
-  String _getCurrentTime() {
-    final now = DateTime.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-  }
-
-  void _addReaction(int messageIndex, String reaction) {
-    setState(() {
-      List<String> reactions =
-          List<String>.from(_messages[messageIndex]['reactions']);
-      if (reactions.contains(reaction)) {
-        reactions.remove(reaction);
-      } else {
-        reactions.add(reaction);
-      }
-      _messages[messageIndex]['reactions'] = reactions;
-    });
   }
 
   @override
@@ -202,9 +210,49 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               );
             },
           ),
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+            onSelected: (value) {
+              // Handle action based on the selected value
+              if (value == 'profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      contact: Contact(
+                        id: '1',
+                        name: widget.name,
+                        avatarUrl: widget.avatarUrl,
+                        isOnline: widget.isOnline,
+                        phoneNumber: '',
+                      ),
+                    ),
+                  ),
+                );
+              } else if (value == 'mute') {
+                // Handle mute action
+                print('Muted chat');
+              } else if (value == 'delete') {
+                // Handle delete action
+                print('Deleted chat');
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'profile',
+                  child: Text('View Profile'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'mute',
+                  child: Text('Mute Chat'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Text('Delete Chat'),
+                ),
+              ];
+            },
           ),
         ],
       ),
@@ -234,8 +282,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Recording: $_seconds seconds',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           _buildMessageInput(),
@@ -259,21 +306,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       child: Row(
         children: [
-          if (!_isRecording)
-            FileAttachmentWidget(
-              onFilePicked: (type, path, name) {
-                setState(() {
-                  _messages.add({
-                    'text': 'File: $name',
-                    'isMe': true,
-                    'time': _getCurrentTime(),
-                    'reactions': <String>[],
-                    'isVoiceMessage': false,
-                  });
+          FileAttachmentWidget(
+            onFilePicked: (type, path, name) {
+              setState(() {
+                _messages.add({
+                  'text': 'File: $name',
+                  'isMe': true,
+                  'time': _getCurrentTime(),
+                  'reactions': <String>[],
+                  'isVoiceMessage': false,
                 });
-                _scrollToBottom();
-              },
-            ),
+              });
+              _scrollToBottom();
+            },
+          ),
           Expanded(
             child: TextField(
               controller: _messageController,
@@ -298,40 +344,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             onPressed: _sendMessage,
           ),
         ],
-      ),
-    );
-  }
-
-  void _showMessageOptions(BuildContext context, int messageIndex) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => _MessageOptionsSheet(
-        onReactionSelected: (reaction) {
-          Navigator.pop(context);
-          _addReaction(messageIndex, reaction);
-        },
-        onCopy: () {
-          Navigator.pop(context);
-          Clipboard.setData(
-              ClipboardData(text: _messages[messageIndex]['text']));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Message copied to clipboard')),
-          );
-        },
-        onReply: () {
-          Navigator.pop(context);
-          // Implement reply functionality
-        },
-        onForward: () {
-          Navigator.pop(context);
-          // Implement forward functionality
-        },
-        onDelete: () {
-          Navigator.pop(context);
-          setState(() {
-            _messages.removeAt(messageIndex);
-          });
-        },
       ),
     );
   }
@@ -444,17 +456,11 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _MessageOptionsSheet extends StatelessWidget {
-  final Function(String) onReactionSelected;
   final VoidCallback onCopy;
-  final VoidCallback onReply;
-  final VoidCallback onForward;
   final VoidCallback onDelete;
 
   const _MessageOptionsSheet({
-    required this.onReactionSelected,
     required this.onCopy,
-    required this.onReply,
-    required this.onForward,
     required this.onDelete,
   });
 
@@ -468,39 +474,10 @@ class _MessageOptionsSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey.shade200),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildReactionButton('👍', context),
-                _buildReactionButton('❤️', context),
-                _buildReactionButton('😂', context),
-                _buildReactionButton('😮', context),
-                _buildReactionButton('😢', context),
-                _buildReactionButton('👏', context),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.reply),
-            title: const Text('Reply'),
-            onTap: onReply,
-          ),
           ListTile(
             leading: const Icon(Icons.copy),
             title: const Text('Copy'),
             onTap: onCopy,
-          ),
-          ListTile(
-            leading: const Icon(Icons.forward),
-            title: const Text('Forward'),
-            onTap: onForward,
           ),
           ListTile(
             leading: const Icon(Icons.delete),
@@ -509,23 +486,6 @@ class _MessageOptionsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
-      ),
-    );
-  }
-
-  Widget _buildReactionButton(String emoji, BuildContext context) {
-    return GestureDetector(
-      onTap: () => onReactionSelected(emoji),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          emoji,
-          style: const TextStyle(fontSize: 24),
-        ),
       ),
     );
   }
