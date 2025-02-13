@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'channel_detail_screen.dart';
+import 'package:telegram_clone/constants/colors.dart'; // Import the new screen
 
 class NewChannelScreen extends StatelessWidget {
   const NewChannelScreen({Key? key}) : super(key: key);
@@ -47,14 +49,16 @@ class NewChannelScreen extends StatelessWidget {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  // Handle channel creation logic here
-                  // ignore: avoid_print
-                  print('Create Channel button pressed');
+                  // Navigate to the ChannelDetailScreen when the button is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ChannelDetailScreen()),
+                  );
                 },
                 // ignore: sort_child_properties_last
                 child: const Text('Create Channel'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Button color
+                  backgroundColor: AppColors.primaryBlue, // Button color
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
               ),
